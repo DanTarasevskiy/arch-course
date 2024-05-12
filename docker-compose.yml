@@ -20,18 +20,18 @@ services:
     ports:
       - "6379:6379"
 
-  api-gateway:
+  api_gateway:
     build: services
-    container_name: api-gateway
+    container_name: api_gateway
     restart: always
     ports:
       - "8080:80"
     volumes:
-      - ./services/api-gateway:/var/www/html
+      - ./services/api_gateway:/var/www/html
 
-  app-service:
+  app_service:
     build: services
-    container_name: app-service
+    container_name: app_service
     restart: always
     ports:
       - "8070:80"
@@ -39,7 +39,7 @@ services:
       - postgres
       - identity_provider
     volumes:
-      - ./services/app-service:/var/www/html
+      - ./services/app_service:/var/www/html
     command: bash -c "composer install && php instruments/load_jwks.php && apache2-foreground"
 
   identity_provider:
