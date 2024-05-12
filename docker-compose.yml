@@ -1,0 +1,69 @@
+version: "3"
+services:
+  postgres:
+    image: library/postgres:13
+    container_name: postgres
+    restart: on-failure
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_DB: postgres
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: 'bitnami/redis:latest'
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - "6379:6379"
+
+  api-gateway:
+    build: services
+    container_name: api-gateway
+    restart: always
+    ports:
+      - "8080:80"
+    volumes:
+      - ./services/api-gateway:/var/www/html
+
+  app-service:
+    build: services
+    container_name: app-service
+    restart: always
+    ports:
+      - "8070:80"
+    depends_on:
+      - postgres
+      - identity_provider
+    volumes:
+      - ./services/app-service:/var/www/html
+    command: bash -c "composer install && php instruments/load_jwks.php && apache2-foreground"
+
+  identity_provider:
+    build: services
+    container_name: identity_provider
+    restart: always
+    ports:
+      - "8040:80"
+    depends_on:
+      - postgres
+    volumes:
+      - ./services/identity_provider:/var/www/html
+      - ./instruments:/var/www/html/instruments
+    command: bash -c "composer install && php jwksGenerator.php && apache2-foreground"
+
+  pgadmin:
+    container_name: pgadmin4_container
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "5050:80"
+
+volumes:
+  db-data:
