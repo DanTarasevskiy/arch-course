@@ -28,6 +28,8 @@ services:
       - "8080:80"
     volumes:
       - ./services/api_gateway:/var/www/html
+    command: bash -c "composer install --ignore-platform-reqs && apache2-foreground"
+
 
   app_service:
     build: services
@@ -40,7 +42,7 @@ services:
       - identity_provider
     volumes:
       - ./services/app_service:/var/www/html
-    command: bash -c "composer install && php instruments/load_jwks.php && apache2-foreground"
+    command: bash -c "composer install --ignore-platform-reqs && php instruments/load_jwks.php && apache2-foreground"
 
   identity_provider:
     build: services
@@ -52,7 +54,6 @@ services:
       - postgres
     volumes:
       - ./services/identity_provider:/var/www/html
-      - ./instruments:/var/www/html/instruments
     command: bash -c "composer install && php jwksGenerator.php && apache2-foreground"
 
   pgadmin:
