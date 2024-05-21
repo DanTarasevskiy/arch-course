@@ -28,7 +28,7 @@ services:
       - "8080:80"
     volumes:
       - ./services/api_gateway:/var/www/html
-    command: bash -c "composer install --ignore-platform-reqs && apache2-foreground"
+    command: bash -c "composer install && apache2-foreground"
 
 
   app_service:
@@ -39,22 +39,21 @@ services:
       - "8070:80"
     depends_on:
       - postgres
-      - identity_provider
     volumes:
       - ./services/app_service:/var/www/html
-    command: bash -c "composer install --ignore-platform-reqs && php instruments/load_jwks.php && apache2-foreground"
+    command: bash -c "composer install && apache2-foreground"
 
-  identity_provider:
+  users_service:
     build: services
-    container_name: identity_provider
+    container_name: users_service
     restart: always
     ports:
-      - "8040:80"
+      - "8060:80"
     depends_on:
       - postgres
     volumes:
-      - ./services/identity_provider:/var/www/html
-    command: bash -c "composer install && php jwksGenerator.php && apache2-foreground"
+      - ./services/users_service:/var/www/html
+    command: bash -c "composer install && apache2-foreground"
 
   pgadmin:
     container_name: pgadmin4_container
