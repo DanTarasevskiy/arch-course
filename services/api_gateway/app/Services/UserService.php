@@ -6,6 +6,7 @@ namespace App\Services;
 
 use App\Traits\RequestService;
 
+use Illuminate\Http\Request;
 use function config;
 
 class UserService
@@ -28,9 +29,9 @@ class UserService
         $this->secret = config('services.users.secret');
     }
 
-    public function fetchUsers() : string
+    public function fetchUsers(array $params = []) : string
     {
-        return $this->request('GET', '/api/user');
+        return $this->request('GET', '/api/user', $params);
     }
 
     public function fetchUser($id) : string

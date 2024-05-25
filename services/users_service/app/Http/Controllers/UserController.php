@@ -5,14 +5,27 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::all();
-        return $this->successResponse($users);
+        $params = $request->all();
+        $users = User::query();
+
+        if (isset($params['login'])) {
+            $users->where(DB::raw('lower(login)'), 'LIKE', "%" . mb_strtolower($params['login']) . "%");
+        }
+        if (isset($params['name'])) {
+            $users->where(DB::raw('lower(name)'), 'LIKE', "%" . mb_strtolower($params['name']) . "%");
+        }
+        if (isset($params['surname'])) {
+            $users->where(DB::raw('lower(surname)'), 'LIKE', "%" . mb_strtolower($params['surname']) . "%");
+        }
+
+        return $this->successResponse($users->get());
     }
 
     public function show($id)
@@ -26,17 +39,21 @@ class UserController extends Controller
         try {
             $rules = [
                 'login' => 'unique:users|required|string|max:64',
-                'password' => 'required|string|min:8|max:64'
+                'password' => 'required|string|min:8|max:64',
+                'name' => 'required|string',
+                'surname' => 'required|string',
             ];
             $this->validate($request, $rules);
             $params = $request->all();
             $user = User::create([
                 'login' => $params['login'],
                 'password' => Hash::make($params['password']),
+                'name' => $params['name'],
+                'surname' => $params['surname'],
             ]);
             return $this->successResponse($user);
         } catch (\Illuminate\Validation\ValidationException $ex) {
-            return $this->errorResponse($ex->errors(), 400);
+            return $this->errorResponse($ex->errors(), Response::HTTP_BAD_REQUEST);
         }
     }
 
@@ -45,7 +62,9 @@ class UserController extends Controller
         try {
             $rules = [
                 'login' => 'unique:users|string|max:64',
-                'password' => 'string|min:8|max:64'
+                'password' => 'string|min:8|max:64',
+                'name' => 'string',
+                'surname' => 'string',
             ];
 
             $this->validate($request, $rules);
@@ -59,6 +78,8 @@ class UserController extends Controller
             $user = $user->fill([
                 'login' => $params['login'] ?? $user->login,
                 'password' => isset($params['password']) ? Hash::make($params['password']) : $user->password,
+                'name' => $params['name'] ?? $user->name,
+                'surname' => $params['surname'] ?? $user->surname,
             ]);
 
             $user->save();

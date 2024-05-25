@@ -33,9 +33,9 @@ class UserController extends Controller
         // $this->productService = $productService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        return $this->successResponse($this->userService->fetchUsers());
+        return $this->successResponse($this->userService->fetchUsers($request->all()));
     }
 
     public function getUser($id)

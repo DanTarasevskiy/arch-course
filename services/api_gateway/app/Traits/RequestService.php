@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace App\Traits;
 
@@ -17,7 +17,7 @@ trait RequestService
      * @return string
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function request($method, $requestUrl, $formParams = [], $headers = []) : string
+    public function request($method, $requestUrl, $formParams = [], $headers = []): string
     {
 
         $client = new Client([
@@ -28,12 +28,21 @@ trait RequestService
             $headers['Authorization'] = $this->secret;
         }
 
-        $response = $client->request($method, $requestUrl,
-            [
-                'form_params' => $formParams,
-                'headers' => $headers
-            ]
-        );
+        if ($method === 'GET') {
+            $response = $client->request($method, $requestUrl,
+                [
+                    'query' => $formParams,
+                    'headers' => $headers
+                ]
+            );
+        } else {
+            $response = $client->request($method, $requestUrl,
+                [
+                    'form_params' => $formParams,
+                    'headers' => $headers
+                ]
+            );
+        }
 
         return $response->getBody()->getContents();
     }
