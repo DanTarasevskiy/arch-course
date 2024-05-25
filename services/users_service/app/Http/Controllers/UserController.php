@@ -52,14 +52,14 @@ class UserController extends Controller
             $user = User::findOrFail($id);
 
             $params = $request->all();
+            if (empty($params)) {
+                return $this->errorResponse('at least one value must be change',
+                    Response::HTTP_UNPROCESSABLE_ENTITY);
+            }
             $user = $user->fill([
                 'login' => $params['login'] ?? $user->login,
                 'password' => isset($params['password']) ? Hash::make($params['password']) : $user->password,
             ]);
-            if ($user->isClean()) {
-                return $this->errorResponse('at least one value must be change',
-                    Response::HTTP_UNPROCESSABLE_ENTITY);
-            }
 
             $user->save();
             return $this->successResponse($user);
