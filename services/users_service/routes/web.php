@@ -19,11 +19,11 @@ $router->get('/', function () use ($router) {
 
 $router->group(['prefix' => 'api'], function () use ($router) {
     $router->group(['prefix' => 'user'], function () use ($router) {
+
         $router->get('/', ['uses' => 'UserController@index']);
-        $router->get('/{userId}', ['uses' => 'UserController@show']);
-    /*    $router->post('/', ['uses' => 'ProductController@store']);
-        $router->get('/{product}', ['uses' => 'ProductController@show']);
-        $router->patch('/{product}', ['uses' => 'ProductController@update']);
-        $router->delete('/{product}', ['uses' => 'ProductController@destroy']);*/
+        $router->get('/{id}', ['uses' => 'UserController@show']);
+        $router->post('/', ['uses' => 'UserController@store']);
+        $router->patch('/{id}', ['uses' => 'UserController@update']);
+        $router->delete('/{id}', ['uses' => 'UserController@destroy']);
     });
 });

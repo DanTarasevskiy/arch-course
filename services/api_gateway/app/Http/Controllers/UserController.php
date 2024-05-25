@@ -8,6 +8,7 @@ use App\Services;
 use App\Services\UserService;
 use Illuminate\Http\Request;
 
+
 class UserController extends Controller
 {
     /**
@@ -28,29 +29,33 @@ class UserController extends Controller
      */
     public function __construct(UserService $userService/*, ProductService $productService*/)
     {
-        //dd('lol');
         $this->userService = $userService;
         // $this->productService = $productService;
     }
 
-    /**
-     * @return mixed
-     */
     public function index()
     {
-
         return $this->successResponse($this->userService->fetchUsers());
     }
 
-    /**
-     * @param $userId
-     *
-     * @return mixed
-     */
-    public function show($userId)
+    public function getUser($id)
     {
-        return $this->successResponse($this->userService->fetchUser($userId));
+        return $this->successResponse($this->userService->fetchUser($id));
     }
 
+    public function store(Request $request)
+    {
+        return $this->successResponse($this->userService->createUser($request->all()));
+    }
+
+    public function update(Request $request, $id)
+    {
+        return $this->successResponse($this->userService->updateUser($id, $request->all()));
+    }
+
+    public function destroy($id)
+    {
+        return $this->successResponse($this->userService->deleteUser($id));
+    }
 
 }
