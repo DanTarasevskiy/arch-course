@@ -15,14 +15,8 @@ class UserController extends Controller
         $params = $request->all();
         $users = User::query();
 
-        if (isset($params['login'])) {
-            $users->where(DB::raw('lower(login)'), 'LIKE', "%" . mb_strtolower($params['login']) . "%");
-        }
-        if (isset($params['name'])) {
-            $users->where(DB::raw('lower(name)'), 'LIKE', "%" . mb_strtolower($params['name']) . "%");
-        }
-        if (isset($params['surname'])) {
-            $users->where(DB::raw('lower(surname)'), 'LIKE', "%" . mb_strtolower($params['surname']) . "%");
+        foreach ($params as $key => $value) {
+            $users->where(DB::raw("lower($key)"), 'LIKE', "%" . mb_strtolower($value) . "%");
         }
 
         return $this->successResponse($users->get());
@@ -85,7 +79,7 @@ class UserController extends Controller
             $user->save();
             return $this->successResponse($user);
         } catch (\Illuminate\Validation\ValidationException $ex) {
-            return $this->errorResponse($ex->errors(), 400);
+            return $this->errorResponse($ex->errors(), Response::HTTP_BAD_REQUEST);
         }
     }
 
