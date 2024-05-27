@@ -18,6 +18,11 @@ $router->get('/', function () use ($router) {
 });
 
 $router->group(['prefix' => 'api'], function () use ($router) {
+    $router->group(['prefix' => 'auth'], function () use ($router) {
+        $router->get('/', ['uses' => 'AuthController@check']);
+        $router->post('/', ['uses' => 'AuthController@index']);
+    });
+
     $router->group(['prefix' => 'user'], function () use ($router) {
 
         $router->get('/', ['uses' => 'UserController@index']);
