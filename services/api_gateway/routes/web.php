@@ -23,8 +23,6 @@ $router->get('foo/{id}', function ($id) {
     return 'Hello World'.$id;
 });
 
-
-
 $router->group(['prefix' => 'api', /*'middleware' => ['client.credentials']*/], function () use ($router) {
     $router->group(['prefix' => 'user'], function () use ($router) {
         $router->get('/', ['uses' => 'UserController@index']);
