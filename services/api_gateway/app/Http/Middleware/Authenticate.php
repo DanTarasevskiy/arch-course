@@ -20,6 +20,10 @@ class Authenticate
     {
         $token = $request->bearerToken();
 
+        if(empty($token)){
+            return $this->errorResponse('Bearer token not found!', Response::HTTP_UNAUTHORIZED);
+        }
+
         try {
             $jwks = json_decode(file_get_contents(base_path() . "/.well-known/jwks.json"));
             $jwk = $jwks->keys[0]->x5c[0];
