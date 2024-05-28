@@ -18,7 +18,7 @@ $router->get('.well-known/jwks.json', function () {
     echo file_get_contents(base_path() . "/.well-known/jwks.json");
 });
 
-$router->group(['prefix' => 'api', /*'middleware' => [App\Http\Middleware\AuthenticateAccess::class]*/], function () use ($router) {
+$router->group(['prefix' => 'api', 'middleware' => [App\Http\Middleware\AuthenticateAccess::class]], function () use ($router) {
     $router->group(['prefix' => 'auth'], function () use ($router) {
         $router->get('/{token}', ['uses' => 'AuthController@check']);
         $router->post('/', ['uses' => 'AuthController@index']);
