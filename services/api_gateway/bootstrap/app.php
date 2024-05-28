@@ -80,7 +80,7 @@ $app->configure('services');
 // ]);
 
 $app->routeMiddleware([
-    'auth' => App\Http\Middleware\Authenticate::class,
+    'user-access' => App\Http\Middleware\Authenticate::class,
     //'client.credentials' => \Laravel\Passport\Http\Middleware\CheckClientCredentials::class,
 ]);
 /*

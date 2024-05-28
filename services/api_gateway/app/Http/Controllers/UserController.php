@@ -58,4 +58,9 @@ class UserController extends Controller
         return $this->successResponse($this->userService->deleteUser($id));
     }
 
+    public function auth(Request $request)
+    {
+        return $this->successResponse($this->userService->authUser($request->all()));
+    }
+
 }

@@ -53,4 +53,9 @@ class UserService
     {
         return $this->request('DELETE', "/api/user/{$id}");
     }
+
+    public function authUser($data)
+    {
+        return $this->request('POST', "/api/auth", $data);
+    }
 }

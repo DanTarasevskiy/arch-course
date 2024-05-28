@@ -13,18 +13,18 @@
 |
 */
 
-$router->get('/', function () use ($router) {
-    return $router->app->version();
+$router->get('.well-known/jwks.json', function () {
+    header('Content-Type: application/json; charset=utf-8');
+    echo file_get_contents(base_path() . "/.well-known/jwks.json");
 });
 
-$router->group(['prefix' => 'api'], function () use ($router) {
+$router->group(['prefix' => 'api', /*'middleware' => [App\Http\Middleware\AuthenticateAccess::class]*/], function () use ($router) {
     $router->group(['prefix' => 'auth'], function () use ($router) {
-        $router->get('/', ['uses' => 'AuthController@check']);
+        $router->get('/{token}', ['uses' => 'AuthController@check']);
         $router->post('/', ['uses' => 'AuthController@index']);
     });
 
     $router->group(['prefix' => 'user'], function () use ($router) {
-
         $router->get('/', ['uses' => 'UserController@index']);
         $router->get('/{id}', ['uses' => 'UserController@show']);
         $router->post('/', ['uses' => 'UserController@store']);

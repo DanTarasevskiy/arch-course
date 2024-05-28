@@ -24,12 +24,14 @@ services:
     build: services
     container_name: api_gateway
     restart: always
+    depends_on:
+      - users_service
     ports:
       - "8080:80"
     volumes:
       - ./services/api_gateway:/var/www/html
-    command: bash -c "composer install && apache2-foreground"
-
+    # command: bash -c "composer install && cp .env.example .env && php artisan jwks:load && apache2-foreground"
+    command: bash -c "composer install && cp .env.example .env && apache2-foreground"
 
   app_service:
     build: services
@@ -53,7 +55,8 @@ services:
       - postgres
     volumes:
       - ./services/users_service:/var/www/html
-    command: bash -c "composer install && apache2-foreground"
+    # command: bash -c "composer install && cp .env.example .env && php artisan jwks:generate && php artisan migrate && php artisan db:seed && apache2-foreground"
+    command: bash -c "composer install && cp .env.example .env && php artisan jwks:generate && php artisan migrate:refresh --seed && apache2-foreground"
 
   pgadmin:
     container_name: pgadmin4_container

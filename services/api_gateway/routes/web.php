@@ -15,16 +15,11 @@
 
 //use App\Http\Controllers\UserController;
 
-$router->get('/', function () use ($router) {
-    return $router->app->version();
-});
-
-$router->get('foo/{id}', function ($id) {
-    return 'Hello World'.$id;
-});
-
-$router->group(['prefix' => 'api', /*'middleware' => ['client.credentials']*/], function () use ($router) {
-    $router->group(['prefix' => 'user'], function () use ($router) {
+$router->group(['prefix' => 'api'], function () use ($router) {
+    $router->group(['prefix' => 'auth'], function () use ($router) {
+        $router->post('/', ['uses' => 'UserController@auth']);
+    });
+    $router->group(['prefix' => 'user', 'middleware' => ['user-access']], function () use ($router) {
         $router->get('/', ['uses' => 'UserController@index']);
         $router->get('{id}', ['uses' => 'UserController@getUser']);
         $router->post('/', ['uses' => 'UserController@store']);
@@ -32,7 +27,7 @@ $router->group(['prefix' => 'api', /*'middleware' => ['client.credentials']*/], 
         $router->delete('/{id}', ['uses' => 'UserController@destroy']);
     });
 
-    $router->group(['prefix' => 'messenger'], function () use ($router) {
+    $router->group(['prefix' => 'messenger', 'middleware' => ['user-access']], function () use ($router) {
 
     });
 });
