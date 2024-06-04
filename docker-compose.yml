@@ -54,7 +54,7 @@ services:
       - postgres
     volumes:
       - ./services/p2p_chat_service:/var/www/html
-    command: bash -c "composer install && cp .env.example .env && chmod 777 -R ./storage && php artisan jwks:load && apache2-foreground"
+    command: bash -c "composer install && cp .env.example .env && chmod 777 -R ./storage && php artisan jwks:load && && php artisan migrate:refresh --seed && apache2-foreground"
 
   pgadmin:
     container_name: pgadmin4_container
