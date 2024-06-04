@@ -2,43 +2,40 @@
 
 namespace App\Http\Middleware;
 
+use App\Traits\ApiResponse;
 use Closure;
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
+use Illuminate\Http\Request;
 use Illuminate\Contracts\Auth\Factory as Auth;
+use Illuminate\Http\Response;
 
 class Authenticate
 {
-    /**
-     * The authentication guard factory instance.
-     *
-     * @var \Illuminate\Contracts\Auth\Factory
-     */
-    protected $auth;
+    use ApiResponse;
 
     /**
-     * Create a new middleware instance.
-     *
-     * @param  \Illuminate\Contracts\Auth\Factory  $auth
-     * @return void
+     * Проверка валидности токена авторизации
      */
-    public function __construct(Auth $auth)
+    public function handle(Request $request, Closure $next)
     {
-        $this->auth = $auth;
-    }
-
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
-     * @param  string|null  $guard
-     * @return mixed
-     */
-    public function handle($request, Closure $next, $guard = null)
-    {
-        if ($this->auth->guard($guard)->guest()) {
-            return response('Unauthorized.', 401);
+        $token = $request->header('Bearer');
+        if (empty($token)) {
+            return $this->errorResponse('Bearer token not found!', Response::HTTP_UNAUTHORIZED);
         }
 
-        return $next($request);
+        try {
+            $jwks = json_decode(file_get_contents(base_path() . "/.well-known/jwks.json"));
+            $jwk = $jwks->keys[0]->x5c[0];
+            $decoded = JWT::decode($token, new Key($jwk, 'RS256'));
+            $request->user = $decoded;
+            return $next($request);
+        } catch (\Firebase\JWT\ExpiredException $e) {
+            return $this->errorResponse('Token expired!', Response::HTTP_UNAUTHORIZED);
+        } catch (\Firebase\JWT\SignatureInvalidException $e) {
+            return $this->errorResponse('Invalid signature!', Response::HTTP_UNAUTHORIZED);
+        } catch (\Exception $e) {
+            return $this->errorResponse('Invalid token! '.$e, Response::HTTP_UNAUTHORIZED);
+        }
     }
 }

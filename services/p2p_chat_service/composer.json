@@ -9,8 +9,7 @@
         "firebase/php-jwt": "^6.4.0",
         "laravel/lumen-framework": "^10.0",
         "guzzlehttp/guzzle": "^6.5",
-        "vlucas/phpdotenv": "*",
-        "mongodb/laravel-mongodb": "*"
+        "vlucas/phpdotenv": "*"
     },
     "require-dev": {
         "fakerphp/faker": "*",

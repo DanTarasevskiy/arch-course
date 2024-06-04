@@ -77,6 +77,7 @@ $app->configure('app');
 // ]);
 
 $app->middleware([
+   // 'user-access' => App\Http\Middleware\Authenticate::class,
    // 'service-access' => App\Http\Middleware\AuthenticateAccess::class
 ]);
 
@@ -91,7 +92,6 @@ $app->middleware([
 |
 */
 
-$app->register(MongoDB\Laravel\MongoDBServiceProvider::class);
 // $app->register(App\Providers\AppServiceProvider::class);
 // $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);

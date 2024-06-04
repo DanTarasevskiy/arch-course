@@ -13,21 +13,11 @@
 |
 */
 
-$router->get('kek', function () {
-    echo "Hello world!";
+$router->group(['prefix' => 'api', 'middleware' => [App\Http\Middleware\Authenticate::class, App\Http\Middleware\AuthenticateAccess::class]], function () use ($router) {
+    $router->group(['prefix' => 'chat'], function () use ($router) {
+        $router->get('/', ['uses' => 'ChatController@getChats']);
+        $router->get('/{id}', ['uses' => 'ChatController@getChat']);
+        $router->post('/', ['uses' => 'ChatController@createChat']);
+        $router->post('/{id}', ['uses' => 'ChatController@createMessage']);
+    });
 });
-
-/*$router->group(['prefix' => 'api', 'middleware' => [App\Http\Middleware\AuthenticateAccess::class]], function () use ($router) {
-    $router->group(['prefix' => 'auth'], function () use ($router) {
-        $router->get('/{token}', ['uses' => 'AuthController@check']);
-        $router->post('/', ['uses' => 'AuthController@index']);
-    });
-
-    $router->group(['prefix' => 'user'], function () use ($router) {
-        $router->get('/', ['uses' => 'UserController@index']);
-        $router->get('/{id}', ['uses' => 'UserController@show']);
-        $router->post('/', ['uses' => 'UserController@store']);
-        $router->patch('/{id}', ['uses' => 'UserController@update']);
-        $router->delete('/{id}', ['uses' => 'UserController@destroy']);
-    });
-});*/

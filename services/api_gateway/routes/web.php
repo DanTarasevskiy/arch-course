@@ -27,7 +27,10 @@ $router->group(['prefix' => 'api'], function () use ($router) {
         $router->delete('/{id}', ['uses' => 'UserController@destroy']);
     });
 
-    $router->group(['prefix' => 'messenger', 'middleware' => ['user-access']], function () use ($router) {
-
+    $router->group(['prefix' => 'p2p-chat', 'middleware' => ['user-access']], function () use ($router) {
+        $router->get('/', ['uses' => 'P2PChatController@getChats']);
+        $router->get('{id}', ['uses' => 'P2PChatController@getChat']);
+        $router->post('/', ['uses' => 'P2PChatController@createChat']);
+        $router->post('/{id}', ['uses' => 'P2PChatController@createMessage']);
     });
 });

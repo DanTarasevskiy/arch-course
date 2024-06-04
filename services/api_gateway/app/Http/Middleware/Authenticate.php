@@ -19,7 +19,6 @@ class Authenticate
     public function handle($request, Closure $next)
     {
         $token = $request->bearerToken();
-
         if(empty($token)){
             return $this->errorResponse('Bearer token not found!', Response::HTTP_UNAUTHORIZED);
         }
@@ -27,8 +26,9 @@ class Authenticate
         try {
             $jwks = json_decode(file_get_contents(base_path() . "/.well-known/jwks.json"));
             $jwk = $jwks->keys[0]->x5c[0];
+            // dd($token, $jwk,);
             $decoded = JWT::decode($token, new Key($jwk, 'RS256'));
-
+            $request->user = $decoded;
             return $next($request);
         } catch (\Firebase\JWT\ExpiredException $e) {
             return $this->errorResponse('Token expired!', Response::HTTP_UNAUTHORIZED);

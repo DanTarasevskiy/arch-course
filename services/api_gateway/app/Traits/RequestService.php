@@ -28,6 +28,11 @@ trait RequestService
             $headers['Authorization'] = $this->secret;
         }
 
+        $request = app('request');
+        if (!empty($request->bearerToken())) {
+            $headers['Bearer'] = $request->bearerToken();
+        }
+
         if ($method === 'GET') {
             $response = $client->request($method, $requestUrl,
                 [

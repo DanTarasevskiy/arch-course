@@ -14,9 +14,15 @@ return new class extends Migration
         Schema::create('chats', function (Blueprint $table) {
             $table->id();
             $table->integer('sender_id');
-            $table->string('recipient_id');
+            $table->integer('recipient_id');
             $table->string('sender_name');
             $table->string('recipient_name');
+            $table->timestamps();
+        });
+        Schema::create('messages', function (Blueprint $table) {
+            $table->id();
+            $table->integer('chat_id');
+            $table->integer('sender_id');
             $table->string('message');
             $table->timestamps();
         });
@@ -27,6 +33,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('messages');
         Schema::dropIfExists('chats');
     }
 };

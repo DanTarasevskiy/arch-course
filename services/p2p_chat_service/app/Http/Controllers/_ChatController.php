@@ -2,25 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Chat;
+use App\Models\Message;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
-class UserController extends Controller
+class ChatController extends Controller
 {
     public function index(Request $request)
     {
-        $params = $request->all();
-        $users = User::query();
-
-        foreach ($params as $key => $value) {
-            $users->where(DB::raw("lower($key)"), 'LIKE', "%" . mb_strtolower($value) . "%");
-        }
-
-        return $this->successResponse($users->get());
+        $chats = Chat::all();
+        return $this->successResponse($chats);
     }
+
+/*getChat
+createChat
+createMessage*/
 
     public function show($id)
     {
@@ -28,7 +28,7 @@ class UserController extends Controller
         return $this->successResponse($user);
     }
 
-    public function store(Request $request)
+    public function create(Request $request)
     {
         try {
             $rules = [
@@ -50,7 +50,7 @@ class UserController extends Controller
             return $this->errorResponse($ex->errors(), Response::HTTP_BAD_REQUEST);
         }
     }
-
+/*
     public function update(Request $request, $id)
     {
         try {
@@ -89,7 +89,7 @@ class UserController extends Controller
         $user = User::findOrFail($id);
         $user->delete();
         return $this->successResponse($user);
-    }
+    }*/
 
 
 }
