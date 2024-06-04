@@ -44,14 +44,23 @@ class P2PChatController extends Controller
 
     public function createChat(Request $request)
     {
+        $rules = [
+            'recipient_id' => 'required|integer',
+        ];
+        $this->validate($request, $rules);
+
         $params = $request->all();
         $recipient = $this->successResponse($this->userService->fetchUser($params['recipient_id']));
         $user = json_decode($recipient->content())->data;
+
+        if (!isset($user->id)) {
+            return $this->errorResponse("User with id " . $params['recipient_id'] . " not exists!", '404');
+        }
+
         $chatParams = [
             'recipient_id' => $user->id,
             'recipient_name' => implode(' ', [$user->name, $user->surname]),
         ];
-
         return $this->successResponse($this->p2pChatService->createChat($chatParams));
     }
 
