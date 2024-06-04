@@ -44,6 +44,19 @@ services:
       - ./services/users_service:/var/www/html
     command: bash -c "composer install && cp .env.example .env && chmod 777 -R ./storage/logs && php artisan jwks:generate && php artisan migrate:refresh --seed && apache2-foreground"
 
+  p2p_chat_service:
+    build: services
+    container_name: p2p_chat_service
+    restart: always
+    ports:
+      - "8050:80"
+    depends_on:
+      - postgres
+    volumes:
+      - ./services/p2p_chat_service:/var/www/html
+    command: bash -c "composer install && cp .env.example .env && chmod 777 -R ./storage/logs && php artisan jwks:load && apache2-foreground"
+
+
   pgadmin:
     container_name: pgadmin4_container
     image: dpage/pgadmin4
